@@ -414,13 +414,26 @@
         </div>
     </section>
 
-    <!-- 6. Contenido de SABER MÁS (Noticias e Información - Revertido) --><section id="saber-mas" class="page-view hidden bg-reropero-light-gray">
+    <!-- 6. Contenido de SABER MÁS (LLM Powered) (Fondo Gris Claro) -->
+    <section id="saber-mas" class="page-view hidden bg-reropero-light-gray">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-4xl sm:text-5xl font-extrabold text-reropero-dark-green text-center mb-12">
-                El camino hacia la moda circular
+                El Camino Hacia la Moda Circular
             </h2>
+
+            <!-- Pestañas de Navegación -->
+            <div class="flex border-b border-gray-300 mb-8">
+                <button id="tab-info" onclick="showTab('info')" class="tab-button active py-2 px-4 text-lg text-gray-600 transition-colors">
+                    Información y Noticias
+                </button>
+                <button id="tab-asesor" onclick="showTab('asesor')" class="tab-button py-2 px-4 text-lg text-gray-600 transition-colors">
+                    Re-Asesor Textil 
+                </button>
+            </div>
             
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Contenido 1: Información y Noticias (Estático) -->
+            <div id="content-info" class="tab-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 
                 <!-- Artículo 1: Fast Fashion -->
                 <div class="lg:col-span-1 bg-white p-8 rounded-xl shadow-2xl border-l-4 border-reropero-dark-green">
@@ -468,7 +481,7 @@
                 </div>
             </div>
 
-            <!-- Contenido 2: Re-Asesor Textil (LLM Powered) -->
+             <!-- Contenido 2: Re-Asesor Textil (LLM Powered) -->
             <div id="content-asesor" class="tab-content hidden">
                 <div class="bg-white p-6 rounded-xl shadow-2xl border-2 border-reropero-dark-green/30 max-w-2xl mx-auto">
                     <h3 class="text-2xl font-bold text-reropero-dark-green mb-4 text-center">
@@ -503,6 +516,7 @@
             </div>
         </div>
     </section>
+
     
        <!-- 7. Contenido de Ayuda (Preguntas Frecuentes) (Fondo Gris Claro) -->
     <section id="ayuda" class="page-view hidden bg-reropero-light-gray">
@@ -595,7 +609,7 @@
                 <a href="#" onclick="showSection('sobre-nosotros')" class="hover:text-reropero-soft-green transition-colors font-bold">Sobre Nosotros</a>
             </div>
             <!-- Misión y Visión ELIMINADAS directamente del footer -->
-            <p class="mt-6 text-xs">&copy; 2024 Re-Ropero. Todos los derechos reservados.</p>
+            <p class="mt-6 text-xs">&copy; 2025 Re-Ropero. Todos los derechos reservados.</p>
         </div>
     </footer>
 
@@ -964,6 +978,47 @@
 
         // Inicializar la aplicación al cargar la ventana
         window.onload = initializeFirebaseAndAuth;
+
+
+ // Función para cambiar las pestañas dentro de "Saber Más"
+        function showTab(tabId) {
+            // Ocultar todos los contenidos
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            // Remover 'active' de todos los botones
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Mostrar el contenido y activar el botón
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        }
+
+        // Función de utilidad para caja de mensajes personalizada
+        function showMessageBox(message, type) {
+            const msgBox = document.getElementById('message-box');
+            const msgText = document.getElementById('message-text');
+            
+            if (msgBox && msgText) {
+                msgText.textContent = message;
+                msgBox.className = 'fixed top-20 right-4 p-4 rounded-lg shadow-xl z-50 transition-transform transform';
+                
+                if (type === 'error') {
+                    msgBox.classList.add('bg-red-500', 'text-white');
+                } else if (type === 'info') {
+                    msgBox.classList.add('bg-blue-500', 'text-white');
+                } else if (type === 'success') {
+                    msgBox.classList.add('bg-green-500', 'text-white');
+                }
+                
+                msgBox.classList.remove('translate-x-full'); // Desliza hacia adentro
+                setTimeout(() => {
+                    msgBox.classList.add('translate-x-full'); // Desliza hacia afuera después de 4 segundos
+                }, 4000);
+            }
+        }
 
     </script>
 </body>
