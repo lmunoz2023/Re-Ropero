@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Re-Ropero | Recicla y Reutiliza Textiles en Temuco</title>
+    <!-- Carga de Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configuración personalizada de la paleta de colores de Re-Ropero --><script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        // Colores principales de la paleta
+                        'reropero-dark-green': '#1e5631', // Verde Oscuro (para texto principal y acentos)
+                        'reropero-soft-green': '#a7d9b5', // Color de Acento o toques
+                        'reropero-light-gray': '#e7e8eb', // Gris Claro (Fondo principal de la app)
+                        
+                        // NUEVO COLOR DE ACENTO ROSA para el perfil
+                        'reropero-pink-accent': '#ffb6c1', // Rosa claro (para el avatar)
+
+                        // Colores específicos para el Footer
+                        'reropero-footer-text': '#e7e8eb', // Texto del Footer (Gris Claro)
+                        'reropero-footer-bg': '#1e5631', // Fondo del Footer (Verde Oscuro)
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos base para las tarjetas accesibles */
+        .accessible-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .accessible-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(30, 86, 49, 0.1), 0 4px 6px -4px rgba(30, 86, 49, 0.1);
+        }
+        /* Estilo para los iconos SVG */
+        .svg-icon {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            stroke: currentColor; 
+        }
+        /* Clase para el contenedor de cada "página" */
+        .page-view {
+            min-height: calc(100vh - 4rem - 110px); /* Altura de la vista menos nav y footer */
+            padding-top: 5rem;
+            padding-bottom: 5rem;
+        }
+        /* Estilo para la imagen del encabezado */
+        #hero-image-container {
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            border-radius: 1rem;
+            margin-top: 2rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        #hero-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        /* Estilo para el botón activo de las pestañas */
+        .tab-button.active {
+            border-bottom: 3px solid #1e5631;
+            color: #1e5631;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<!-- Body con fondo gris claro y texto verde oscuro --><body class="bg-reropero-light-gray text-reropero-dark-green font-sans">
+
+    <!-- Barra de Navegación Fija --><nav class="sticky top-0 z-50 bg-white shadow-lg border-b-4 border-reropero-dark-green">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="#" onclick="showSection('proposito')" class="flex-shrink-0 text-2xl font-bold text-reropero-dark-green">
+                    Re-Ropero
+                </a>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#" id="nav-proposito" onclick="showSection('proposito')" class="nav-link px-3 py-2 rounded-md text-base font-medium transition-colors">Inicio</a>
+                        <a href="#" id="nav-mapa" onclick="showSection('mapa')" class="nav-link hover:text-green-700 px-3 py-2 rounded-md text-base font-medium transition-colors">Mapa</a>
+                        <!-- NUEVO ENLACE A HACER UNA DONACIÓN --><a href="#" id="nav-donacion" onclick="showSection('donacion')" class="nav-link hover:text-green-700 px-3 py-2 rounded-md text-base font-medium transition-colors">Donación</a>
+                        <a href="#" id="nav-impacto" onclick="showSection('impacto')" class="nav-link hover:text-green-700 px-3 py-2 rounded-md text-base font-medium transition-colors">Impacto</a>
+                        <!-- ENLACE A SABER MÁS (AHORA CONTIENE LA FUNCIÓN LLM) --><a href="#" id="nav-saber-mas" onclick="showSection('saber-mas')" class="nav-link hover:text-green-700 px-3 py-2 rounded-md text-base font-medium transition-colors">Saber Más</a>
+                        <!-- NUEVO ENLACE A SOBRE NOSOTROS -->
+                        <a href="#" id="nav-sobre-nosotros" onclick="showSection('sobre-nosotros')" class="nav-link hover:text-green-700 px-3 py-2 rounded-md text-base font-medium transition-colors">Sobre Nosotros</a>
+                        <!-- Mi Perfil: Oculto por defecto, visible solo si hay sesión iniciada --><a href="#" id="nav-perfil" class="hidden nav-link hover:text-green-700 px-3 py-2 rounded-md text-base font-medium transition-colors" onclick="showSection('perfil')">Mi Perfil</a>
+                        
+                        <!-- Ayuda (Se mantiene como ayuda, el botón de sesión es dinámico) --><a href="#" id="nav-ayuda" onclick="showSection('ayuda')" class="nav-link hover:text-green-700 px-3 py-2 rounded-md text-base font-medium transition-colors">Ayuda</a>
+
+                        <!-- Botón de Autenticación Dinámico (Iniciar Sesión / Cerrar Sesión) --><a href="#" id="nav-auth" class="nav-link bg-reropero-dark-green text-white px-3 py-2 rounded-md text-base font-medium transition-colors hover:bg-green-700">Iniciar Sesión</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Contenedor para mostrar mensajes (en lugar de alert()) --><div id="message-box" class="fixed top-20 right-4 p-4 rounded-lg shadow-xl z-50 transition-transform transform translate-x-full">
+        <p id="message-text" class="font-semibold"></p>
+    </div>
+
+    <!-- Display del User ID para seguimiento (MANDATORIO) --><div id="user-id-display" class="fixed top-16 right-4 p-1 text-xs bg-gray-200 text-gray-700 rounded-b-lg shadow-md hidden z-40">
+        <!-- Rellenado por JS al iniciar sesión --></div>
+
+    <!-- 1. Contenido de la Página de Inicio (Fondo Gris Claro) --><section id="proposito" class="page-view bg-reropero-light-gray">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+             <!-- Texto en verde oscuro (heredado del body) --><p class="text-3xl font-semibold mb-4">
+                ¡Bienvenido/a a Re-Ropero!
+            </p>
+            <h1 class="text-6xl sm:text-7xl font-extrabold leading-tight mb-4">
+                <!-- Título Corregido -->Dale una nueva vida a tu ropa
+            </h1>
+            <!-- Texto principal ahora en verde oscuro (heredado del body) --><p class="mt-4 text-2xl max-w-4xl mx-auto">
+                Re-Ropero conecta a las personas con puntos de donación y reciclaje textil cercanos. Transforma tus prendas en nuevas oportunidades y gana beneficios.
+            </p>
+            
+            <!-- Imagen de Héroe (Simulación) --><div id="hero-image-container">
+                <img src="https://i.postimg.cc/L6YpZ0rF/2566dc8e-6bcd-4396-a7ce-35967c015f9f.png" alt="Ropa doblada lista para donar o reciclar, con el logo de Re-Ropero">
+            </div>
+
+            <div class="mt-10 flex justify-center space-x-4">
+                <a href="#" onclick="showSection('donacion')" class="px-8 py-4 text-xl font-bold rounded-xl text-white bg-reropero-dark-green shadow-xl transition-all hover:bg-green-800 transform hover:scale-105">
+                    Comenzar a Donar Ahora
+                </a>
+            </div>
+
+            <!-- Dato de Impacto que capta la atención --><div class="mt-16 p-6 bg-white rounded-xl shadow-2xl max-w-2xl mx-auto border-l-8 border-reropero-dark-green">
+                <h2 class="text-xl font-bold text-reropero-dark-green mb-2">¿Sabías que...?</h2>
+                <!-- Títulos más grandes se mantienen en gris oscuro o negro para alto contraste --><p class="text-2xl font-extrabold text-gray-900">
+                    En Chile se generan más de 572 toneladas de residuos textiles al año.
+                </p>
+                <!-- Texto en verde oscuro (heredado del body) --><p class="text-lg mt-2">Tú puedes ser parte de este cambio.</p>
+            </div>
+
+            <!-- Cómo Funciona (Flujo de la App) - SECCIÓN ACTUALIZADA --><div class="mt-20">
+                <h2 class="text-4xl sm:text-5xl font-extrabold text-reropero-dark-green text-center mb-16">
+                    ¿Cómo funciona Re-Ropero?
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                    <!-- Paso 1: Encuentra (Fondo Blanco para contraste) --><div class="accessible-card p-6 rounded-xl bg-white">
+                        <div class="mx-auto h-24 w-24 flex items-center justify-center bg-reropero-dark-green/20 rounded-full mb-4 text-6xl">
+                            📍
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900">1. Localiza</h3>
+                        <!-- Texto en verde oscuro (heredado del body) --><p class="mt-2 text-lg">
+                            Usa nuestro mapa interactivo para encontrar puntos de donación o reciclaje cercanos.
+                        </p>
+                    </div>
+                    <!-- Paso 2: Deposita --><div class="accessible-card p-6 rounded-xl bg-white">
+                        <div class="mx-auto h-24 w-24 flex items-center justify-center bg-reropero-dark-green/20 rounded-full mb-4 text-6xl">
+                            ♻️
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900">2. Prepara y Escanea</h3>
+                        <!-- Texto en verde oscuro (heredado del body) --><p class="mt-2 text-lg">
+                            Prepara los productos o prendas que quieras donar o reciclar y, al llegar al punto seleccionado, escanea el código QR para completar la entrega.
+
+                        </p>
+                    </div>
+                    <!-- Paso 3: Gana --><div class="accessible-card p-6 rounded-xl bg-white">
+                        <div class="mx-auto h-24 w-24 flex items-center justify-center bg-reropero-dark-green/20 rounded-full mb-4 text-6xl">
+                            🪙
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900">3. Obtén recompensas</h3>
+                        <!-- Texto en verde oscuro (heredado del body) --><p class="mt-2 text-lg">
+                            Acumula puntos por cada entrega y canjéalos por descuentos o beneficios locales.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 2. Contenido de la Sección Mapa (Fondo Gris Claro) --><section id="mapa" class="page-view hidden bg-reropero-light-gray">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl sm:text-5xl font-extrabold text-reropero-dark-green text-center mb-12">
+                Encuentra tu punto de reciclaje
+            </h2>
+            <!-- Texto principal ahora en verde oscuro (heredado del body) --><p class="text-center text-lg max-w-3xl mx-auto mb-10">
+                Visualiza en tiempo real todos los lugares cercanos donde puedes donar o reciclar tu ropa. 
+            </p>
+
+            <div class="bg-white p-6 rounded-xl shadow-2xl border-2 border-reropero-soft-green">
+                <div class="flex flex-col md:flex-row gap-6">
+                    <!-- Columna de Filtros y Fichas (Simulación) --><div class="md:w-1/3 p-4 border-r border-gray-200">
+                        
+                        <!-- Campo de Búsqueda --><div class="mb-6">
+                            <h3 class="text-xl font-bold text-reropero-dark-green mb-2">Buscar por ciudad o dirección</h3>
+                            <div class="flex">
+                                <input type="text" placeholder="Ej: Temuco, Av. Alemania" class="flex-grow p-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-reropero-dark-green">
+                                <button class="p-2 bg-reropero-dark-green text-white rounded-r-lg hover:bg-green-700 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="svg-icon h-6 w-6" viewBox="0 0 24 24"><path d="M19 19l-6-6m-7 0a7 7 0 1114 0 7 7 0 01-14 0z"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <h3 class="text-xl font-bold text-reropero-dark-green mt-6 mb-4">Filtros Rápidos</h3>
+                        <div class="space-y-3">
+                            <!-- Filtro 1: Donación --><label class="block">
+                                <input type="checkbox" checked class="rounded text-reropero-dark-green focus:ring-reropero-dark-green">
+                                <span class="ml-2">Donación</span>
+                            </label>
+                            <!-- Filtro 2: Reciclaje (TEXTO SIMPLIFICADO) --><label class="block">
+                                <input type="checkbox" class="rounded text-reropero-dark-green focus:ring-reropero-dark-green">
+                                <span class="ml-2">Reciclaje</span>
+                            </label>
+                        </div>
+                        
+                        <h3 class="text-xl font-bold text-reropero-dark-green mt-6 mb-4">Puntos Cercanos</h3>
+                        <!-- Simulación de Ficha de Punto de Reciclaje. --><div class="accessible-card border p-4 rounded-lg bg-gray-100 hover:bg-gray-200 cursor-pointer">
+                            <!-- Título revertido --><h4 class="font-bold text-gray-900 text-lg">
+                                Punto de Reciclaje / Tienda Ecológica
+                            </h4>
+                            <!-- Dirección y Distancia (Posición original) --><p class="text-sm">
+                                📍 Av. Alemania 1050, Temuco (1.2 km)
+                            </p>
+                            <!-- Calificación y reseñas (Posición revertida) --><span class="flex items-center text-sm text-gray-600 mt-1 mb-2">
+                                <span class="text-yellow-500 mr-1">★4,5</span> (20 reseñas)
+                            </span>
+                            <!-- Horario --><p class="text-xs text-green-700 font-semibold mt-1">
+                                🕓 Lunes a viernes 9:00 – 18:00 hrs.
+                            </p>
+                            <!-- Materiales Aceptados --><p class="text-xs text-reropero-dark-green font-semibold mt-1">
+                                Acepta: ropa limpia, calzado, telas.
+                            </p>
+                            <div class="flex space-x-4 mt-3 text-sm">
+                                <!-- Cómo Llegar - ÍCONO REVERTIDO A PIN DE MAPA --><button class="flex items-center text-reropero-dark-green hover:underline">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="svg-icon h-4 w-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                                    </svg>
+                                    Cómo Llegar
+                                </button>
+                                <!-- Llamar - Ícono de teléfono --><button class="flex items-center text-reropero-dark-green hover:underline">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="svg-icon h-4 w-4 mr-1" viewBox="0 0 24 24"><path d="M22 16.9v3c0 .8-.7 1.6-1.5 1.6A19.9 19.9 0 0 1 2 4.4C2 3.6 2.7 3 3.5 3h3a1 1 0 0 1 1 1.1l-1 5a1 1 0 0 1-.5.7l-2 1.4a15.8 15.8 0 0 0 7.4 7.4l1.4-2c.2-.3.6-.5.9-.5h5c.8 0 1.5.7 1.5 1.5z"/></svg> Llamar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Columna de Mapa (IMAGEN RECUPERADA) --><div class="md:w-2/3 h-96 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+                        <!-- Imagen del mapa de Temuco con puntos de reciclaje marcados --><img src="https://i.postimg.cc/sDXHqdTf/Olivia-Wilson.png" 
+                             alt="Mapa de Temuco con puntos de reciclaje marcados" 
+                             class="w-full h-full object-contain">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Contenido de HACER UNA DONACIÓN (NUEVA SECCIÓN CON QR) -->
+    <section id="donacion" class="page-view hidden bg-reropero-light-gray">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl sm:text-5xl font-extrabold text-reropero-dark-green text-center mb-12">
+                Cada prenda cuenta y los grandes cambios comienzan con pequeñas acciones
+            </h2>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Columna de Instrucciones -->
+                <div class="lg:col-span-2 bg-white p-8 rounded-xl shadow-2xl border-2 border-reropero-dark-green/30">
+                    <h3 class="text-3xl font-bold text-reropero-dark-green mb-6">Prepara tus prendas</h3>
+                    <p class="text-lg mb-4">
+                        Para asegurar el correcto reciclaje y donación, sigue estos sencillos pasos antes de llevar tu ropa al punto de entrega:
+                    </p>
+                    <ul class="space-y-3 list-disc list-inside text-lg">
+                        <li class="font-semibold text-gray-900">
+                            Limpieza: <span class="font-normal text-reropero-dark-green">Toda la ropa debe estar lavada y seca. ¡No aceptamos prendas húmedas o con moho!</span>
+                        </li>
+                        <li class="font-semibold text-gray-900">
+                            Separación: <span class="font-normal text-reropero-dark-green">Separa la ropa según su estado:
+                            <ul class="ml-4 list-circle list-inside">
+                                <li>Donación: Prendas en buen estado, sin rotos ni manchas grandes que puedan ser reutilizadas.</li>
+                                <li>Reciclaje: rendas muy gastadas, dañadas o con materiales difíciles de reutilizar (por ejemplo, trapos, fibras, poliéster muy viejo, etc.).</li>
+                            </ul>
+                            </span>
+                        </li>
+                        <li class="font-semibold text-gray-900">
+                            Empaque: <span class="font-normal text-reropero-dark-green">Lleva tus prendas en bolsas reutilizables, cajas de cartón o cualquier contenedor que puedas volver a usar, y etiqueta cada uno como “Donación” o “Reciclaje” para facilitar la clasificación, evitando el uso de bolsas plásticas desechables para reducir residuos.</span>
+                        </li>
+                    </ul>
+                    <div class="mt-8 p-4 bg-yellow-100 rounded-lg border border-yellow-300">
+                        <p class="font-semibold text-yellow-800">
+                            Recuerda: Cada prenda que dones o recicles ayuda a reducir residuos y a darle una segunda vida a la ropa en tu comunidad.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Columna de QR Code -->
+                <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-2xl flex flex-col items-center justify-center text-center">
+                    <h3 class="text-2xl font-bold text-reropero-dark-green mb-4">Escanea el código QR</h3>
+                    <p class="mb-4 text-lg">
+                        En el punto de entrega, presiona este botón y escanea el QR para registrar tu aporte.
+                    </p>
+                    
+                    <!-- Simulación de QR Code (SVG estático) -->
+                    <div class="p-4 bg-white border-8 border-gray-100 rounded-lg shadow-xl mb-6 w-48 h-48 flex items-center justify-center">
+                        <svg viewBox="0 0 100 100" class="w-40 h-40" xmlns="http://www.w3.org/2000/svg" fill="#1e5631">
+                            <rect x="10" y="10" width="20" height="20"/>
+                            <rect x="70" y="10" width="20" height="20"/>
+                            <rect x="10" y="70" width="20" height="20"/>
+                            <rect x="15" y="15" width="10" height="10" fill="#e7e8eb"/>
+                            <rect x="75" y="15" width="10" height="10" fill="#e7e8eb"/>
+                            <rect x="15" y="75" width="10" height="10" fill="#e7e8eb"/>
+                            
+                            <rect x="45" y="45" width="10" height="10"/>
+                            <rect x="55" y="25" width="5" height="5"/>
+                            <rect x="40" y="65" width="5" height="5"/>
+                            <rect x="25" y="55" width="5" height="5"/>
+                        </svg>
+                    </div>
+
+                    <button id="scan-qr-btn" onclick="simulateDonation()" class="w-full p-4 text-white bg-reropero-dark-green font-bold rounded-lg hover:bg-green-800 transition-colors transform hover:scale-105">
+                        Registrar entrega 
+                    </button>
+                    <p class="mt-2 text-sm text-gray-600">
+                        Cada registro exitoso otorga 500 puntos 🪙
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Contenido de Mi Perfil (Fondo Gris Claro) - AHORA DINÁMICO CON FIRESTORE --><section id="perfil" class="page-view hidden bg-reropero-light-gray">
+         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl sm:text-5xl font-extrabold text-reropero-dark-green text-center mb-12">
+                ¡Hola, Martina!
+            </h2>
+            
+            <p id="profile-status" class="text-xl text-center mb-6 text-red-500 font-semibold hidden">
+                Dale una nueva vida a tu ropa y descubre tus recompensas.
+            </p>
+
+            <div class="bg-white p-8 rounded-xl shadow-2xl border-2 border-reropero-dark-green/30" id="profile-content">
+                <!-- Información del Usuario --><div class="flex items-center mb-6 pb-6 border-b border-gray-200">
+                    <!-- ICONO ACTUALIZADO: Fondo rosa y letra 'M' (MANDATO DEL USUARIO) --><div class="h-16 w-16 rounded-full bg-reropero-pink-accent flex items-center justify-center text-2xl font-bold text-reropero-dark-green" id="profile-initial">M</div>
+                    <div class="ml-4">
+                        <!-- USERNAME ACTUALIZADO: @marti_1566 como placeholder de la plantilla (MANDATO DEL USUARIO) --><h3 class="text-3xl font-bold text-gray-900" id="profile-username">@marti_1566</h3>
+                        <!-- La frase ha sido eliminada. -->
+                    </div>
+                </div>
+
+                <!-- Puntos y Descuentos --><div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-2xl font-bold text-reropero-dark-green">Puntos acumulados por tus aportes</h4>
+                        <!-- PUNTOS ACTUALIZADOS: 1500 como placeholder de la plantilla (MANDATO DEL USUARIO) --><p class="text-6xl font-extrabold text-green-600 my-4" id="user-points">1500</p>
+                        <!-- Texto en verde oscuro (heredado del body) --><p class="text-lg mb-4">
+                            Sigue reciclando y desbloquea más beneficios en locales asociados.
+                        </p>
+                        <a href="#" onclick="showSection('mapa')" class="text-reropero-dark-green font-semibold hover:underline">
+                            Encuentra un punto de donación cercano &rarr;
+                        </a>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-2xl font-bold text-reropero-dark-green">Tus Descuentos Activos</h4>
+                        <div class="mt-4 p-4 bg-red-100 rounded-lg border border-red-300 accessible-card">
+                            <p class="font-semibold text-red-800 text-xl">10% OFF en Cafetería "El Grano"</p>
+                            <p class="text-sm text-red-600 mt-1">Código: RRGRANO10 - Válido solo en Temuco.</p>
+                        </div>
+                        <div class="mt-4 p-4 bg-yellow-100 rounded-lg border border-yellow-300 accessible-card">
+                            <p class="font-semibold text-yellow-800 text-xl">20% OFF en Tienda de Segunda Mano</p>
+                            <p class="text-sm text-yellow-600 mt-1">Canjea en la app antes de tu compra.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+   <!-- 5. Contenido de Impacto (Fondo Gris Claro) - AHORA DINÁMICO CON FIRESTORE --><section id="impacto" class="page-view hidden bg-reropero-light-gray">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl sm:text-5xl font-extrabold text-reropero-dark-green text-center mb-12">
+                Nuestro impacto en el planeta 🌍
+            </h2>
+            <!-- Texto principal ahora en verde oscuro (heredado del body) --><p class="text-xl text-center max-w-2xl mx-auto mb-10">
+                Gracias a las donaciones y reciclaje de toda nuestra comunidad, estamos generando un impacto real en el medio ambiente.
+            </p>
+
+            </div>
+            <!-- Fin Encabezado Dinámico --><div class="accessible-card bg-white p-8 rounded-xl shadow-2xl border-2 border-reropero-soft-green">
+                <!-- Título actualizado: de "Tus Recursos Ahorrados" a "Recursos Ahorrados" --><h3 class="text-2xl font-bold text-reropero-dark-green mb-6 text-center">Recursos Ahorrados</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                    
+                    <!-- Kilos Textiles (Valor estático: 8700 kg) -->
+                    <div class="p-4 bg-green-50 rounded-lg">
+                        <p class="text-4xl font-bold text-green-700" id="impact-textiles">8.7 Kg</p>
+                        <p class="text-sm font-medium text-green-600 mt-1">👕Textiles</p>
+                    </div>
+
+                    <!-- Agua Ahorrada (Valor estático: 2.300.000 L) -->
+                    <!-- ¡Texto sin icono adicional como lo solicitaste! -->
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <p class="text-4xl font-bold text-blue-700" id="impact-water">2.3M L</p>
+                        <p class="text-sm font-medium text-blue-600 mt-1">💧Agua </p>
+                    </div>
+
+                    <!-- Emisiones CO2 Evitadas (Valor estático: 12.500 kg) -->
+                    <div class="p-4 bg-red-50 rounded-lg">
+                        <p class="text-4xl font-bold text-red-700" id="impact-co2">12.5 Kg</p>
+                        <p class="text-sm font-medium text-red-600 mt-1">☁️CO2</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Contenido de SABER MÁS (Noticias e Información - Revertido) --><section id="saber-mas" class="page-view hidden bg-reropero-light-gray">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl sm:text-5xl font-extrabold text-reropero-dark-green text-center mb-12">
+                El camino hacia la moda circular
+            </h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <!-- Artículo 1: Fast Fashion -->
+                <div class="lg:col-span-1 bg-white p-8 rounded-xl shadow-2xl border-l-4 border-reropero-dark-green">
+                    <h3 class="text-3xl font-bold text-gray-900 mb-4">
+                        El Problema de la Fast Fashion
+                    </h3>
+                    
+                    <!-- IMAGEN SOLICITADA POR EL USUARIO AÑADIDA AQUÍ -->
+                    <div class="mb-6 rounded-xl overflow-hidden shadow-lg border border-gray-200">
+                        <img src="https://plus.unsplash.com/premium_photo-1713586580802-854a58542159?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZmFzdCUyMGZhc2hpb258ZW58MHx8MHx8fDA%3D" 
+                             alt="Ropa de desecho en una pila, representando el impacto de la moda rápida." 
+                             class="w-full h-auto object-cover aspect-[3/2]"
+                             onerror="this.onerror=null; this.src='https://placehold.co/600x400/cccccc/000000?text=Error+al+cargar+imagen+Fast+Fashion'">
+                    </div>
+                    <!-- FIN IMAGEN -->
+
+                    <p class="text-gray-700 text-lg mb-4">
+                        La moda rápida genera inmensas cantidades de contaminación y desperdicio, fomentando un consumo excesivo. Entender el impacto es el primer paso.
+                    </p>
+                    <ul class="space-y-3 text-lg list-disc list-inside">
+                        <li>Altísimo consumo de agua en la producción de algodón.</li>
+                        <li>Microplásticos que terminan en el océano a través del lavado.</li>
+                        <li>Residuos textiles que saturan los vertederos.</li>
+                    </ul>
+                </div>
+
+               <!-- Artículo 2: Noticia Chile -->
+                    <div class="accessible-card p-6 rounded-xl bg-white shadow-lg">
+                        <h3 class="text-2xl font-bold text-reropero-dark-green mb-4">Chile, un eje de residuos textiles</h3>
+                        <p class="text-lg mb-4">
+                            Se calcula que más de 39.000 toneladas de desechos textiles son desechadas cada año en el Desierto de Atacama, creando montañas de ropa que no son biodegradables.
+                        </p>
+                        <p class="text-lg mb-4">
+                            Esta acumulación es un grave problema medioambiental, liberando gases de efecto invernadero y microplásticos al degradarse.
+                        </p>
+                       <!-- IMAGEN SOLICITADA POR EL USUARIO AÑADIDA AQUÍ -->
+                    <div class="mb-6 rounded-xl overflow-hidden shadow-lg border border-gray-200">
+                        <img src="https://media-front.elmostrador.cl/2025/07/Chile-el-eslabon-perdido-de-la-Industria-textil-global-700x467.jpg" 
+                             alt="Ropa de desecho en una pila, representando el impacto de la moda rápida." 
+                             class="w-full h-auto object-cover aspect-[3/2]"
+                             onerror="this.onerror=null; this.src='https://placehold.co/600x400/cccccc/000000?text=Error+al+cargar+imagen+Fast+Fashion'">
+                    </div>
+                    <!-- FIN IMAGEN -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenido 2: Re-Asesor Textil (LLM Powered) -->
+            <div id="content-asesor" class="tab-content hidden">
+                <div class="bg-white p-6 rounded-xl shadow-2xl border-2 border-reropero-dark-green/30 max-w-2xl mx-auto">
+                    <h3 class="text-2xl font-bold text-reropero-dark-green mb-4 text-center">
+                        Re-Asesor Textil impulsado por Gemini ✨
+                    </h3>
+                    <p class="mb-6 text-center text-lg">
+                        Cuéntanos sobre tu prenda y su estado, y nuestro asistente te dará ideas para repararla o reutilizarla, así le das más vida antes de donar o reciclar.
+                    </p>
+
+                    <div class="space-y-4">
+                        <label for="clothing-item" class="block font-semibold">Describe tu prenda</label>
+                        <input type="text" id="clothing-item" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-reropero-dark-green focus:border-reropero-dark-green" placeholder="Ej: Pantalón de mezclilla o Suéter de algodón">
+                        
+                        <label for="clothing-condition" class="block font-semibold">Indica su condición </label>
+                        <textarea id="clothing-condition" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-reropero-dark-green focus:border-reropero-dark-green" placeholder="Ej: Agujero pequeño en el codo, o ya no me gusta el color."></textarea>
+                    </div>
+
+                    <button id="generate-recommendation-btn" class="w-full mt-6 p-3 text-white bg-reropero-dark-green font-bold rounded-lg hover:bg-green-800 transition-colors flex items-center justify-center" onclick="handleRecommendationClick()">
+                        <svg id="llm-icon" xmlns="http://www.w3.org/2000/svg" class="svg-icon h-5 w-5 mr-2 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"/><path d="M9 12h.01M15 12h.01M12 9v.01M12 15v.01"/></svg>
+                        Generar Recomendación
+                    </button>
+
+                    <!-- Área de resultados -->
+                    <div id="recommendation-results" class="mt-8 p-4 bg-reropero-light-gray rounded-lg border border-reropero-soft-green hidden">
+                        <h4 class="text-xl font-bold text-reropero-dark-green mb-3">Resultado del Asesor:</h4>
+                        <div id="recommendation-output" class="text-gray-700 whitespace-pre-wrap">
+                            <!-- Contenido generado aquí -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    
+       <!-- 7. Contenido de Ayuda (Preguntas Frecuentes) (Fondo Gris Claro) -->
+    <section id="ayuda" class="page-view hidden bg-reropero-light-gray">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl sm:text-5xl font-extrabold text-reropero-dark-green text-center mb-12">
+                Ayuda y Soporte
+            </h2>
+             <!-- Texto principal ahora en verde oscuro (heredado del body) -->
+            <p class="text-xl text-center max-w-2xl mx-auto mb-10">
+                Aquí respondemos las dudas más comunes sobre el uso de la aplicación y el proceso de reciclaje textil.
+            </p>
+
+            <div class="space-y-4">
+                <!-- Fondo de la tarjeta en blanco para contraste con fondo gris claro -->
+                <div class="accessible-card p-6 rounded-xl bg-white shadow-md">
+                    <h4 class="font-bold text-xl text-gray-900 mb-2">¿Qué tipo de prendas puedo donar/reciclar?</h4>
+                    <!-- Texto en verde oscuro (heredado del body) -->
+                    <p class="text-lg">Solo ropa limpia, seca y sin grandes rupturas. Las telas en mal estado o trapos deben ir a los puntos de "Reciclaje".</p>
+                </div>
+                 <!-- Fondo de la tarjeta en blanco para contraste con fondo gris claro -->
+                <div class="accessible-card p-6 rounded-xl bg-white shadow-md">
+                    <h4 class="font-bold text-xl text-gray-900 mb-2">¿Cómo canjeo mis puntos?</h4>
+                    <!-- Texto en verde oscuro (heredado del body) -->
+                    <p class="text-lg">Debes ir a la sección "Mi Perfil" y en "Descuentos Activos" encontrarás los códigos que puedes usar en los locales asociados, o generar un QR para canje en tienda.</p>
+                </div>
+                 <!-- Fondo de la tarjeta en blanco para contraste con fondo gris claro -->
+                <div class="accessible-card p-6 rounded-xl bg-white shadow-md">
+                    <h4 class="font-bold text-xl text-gray-900 mb-2">¿Qué pasa con mi ropa después?</h4>
+                    <!-- Texto en verde oscuro (heredado del body) -->
+                    <p class="text-lg">Depende del punto: donación a fundaciones o venta a bajo costo; reciclaje a empresas que procesan telas para relleno o nuevos materiales, promoviendo la economía circular.</p>
+                </div>
+                 <!-- Fondo de la tarjeta en blanco para contraste con fondo gris claro -->
+                <div class="accessible-card p-6 rounded-xl bg-white shadow-md">
+                    <h4 class="font-bold text-xl text-gray-900 mb-2">¿Cómo se añaden nuevos puntos de reciclaje a la app?</h4>
+                    <!-- Texto en verde oscuro (heredado del body) -->
+                    <p class="text-lg">Actualmente, solo el equipo de Re-Ropero puede verificarlos e ingresarlos. Si conoces un punto nuevo, puedes enviarnos un email.</p>
+                </div>
+            </div>
+            <p class="mt-8 text-center text-lg text-reropero-dark-green font-semibold">
+                ¿Aún tienes dudas? Contáctanos a support@reropero.cl
+            </p>
+        </div>
+    </section>
+
+    <!-- 8. Contenido de SOBRE NOSOTROS (Misión y Visión) - NUEVA SECCIÓN --><section id="sobre-nosotros" class="page-view hidden bg-reropero-light-gray">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl sm:text-5xl font-extrabold text-reropero-dark-green text-center mb-12">
+                Nuestra Historia y Compromiso
+            </h2>
+            
+            <!-- NUEVO TEXTO DE CONTEXTO E HISTORIA -->
+            <p class="text-lg text-gray-700 mb-8 leading-relaxed text-left">
+                En Temuco, como en muchas ciudades del sur de Chile, la ropa que ya no usamos suele terminar en vertederos o guardada en los hogares sin tener una segunda oportunidad. Observamos cómo toneladas de textiles se desperdician cada año, mientras muchas personas buscan alternativas sostenibles para reciclar o dar nueva vida a sus prendas.
+                <br><br>
+                A partir de esta necesidad nació nuestra plataforma: un proyecto local comprometido con apoyar a la comunidad, facilitar el reciclaje textil y promover un modelo de consumo más responsable. Comenzamos como una iniciativa pequeña, impulsada por la preocupación por el medioambiente y el deseo de ofrecer soluciones reales y accesibles. Hoy trabajamos para conectar a vecinos, organizaciones y puntos de reciclaje, creando una red colaborativa que transforma la manera en que nos relacionamos con la ropa.
+                <br><br>
+                Nuestro compromiso es claro: hacer del sur de Chile un referente en economía circular, donde cada prenda pueda tener una segunda oportunidad.
+            </p>
+            <!-- FIN NUEVO TEXTO -->
+
+            <div class="bg-white p-8 rounded-xl shadow-2xl space-y-8 border-2 border-reropero-dark-green/30">
+                <!-- Misión -->
+                <div>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-4 border-l-4 border-reropero-dark-green pl-4">Nuestra Misión</h3>
+                    <p class="text-gray-700 text-xl leading-relaxed">
+                        Nuestra misión es conectar a la comunidad de Temuco con soluciones de reciclaje textil accesibles, promoviendo la circularidad y reduciendo el impacto ambiental de la moda.
+                    </p>
+                </div>
+                
+                <!-- Visión -->
+                <div>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-4 border-l-4 border-reropero-dark-green pl-4">Nuestra Visión</h3>
+                    <p class="text-gray-700 text-xl leading-relaxed">
+                        Ser la plataforma líder en el sur de Chile para la gestión de residuos textiles, transformando la percepción del descarte de ropa y creando una cultura de reutilización y sostenibilidad.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer --><footer class="bg-reropero-footer-bg text-reropero-footer-text py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-2xl font-bold mb-2">Re-Ropero</p>
+            <!-- LÍNEA ELIMINADA: Transformando la moda en Temuco y más allá. Por un futuro textil circular. -->
+            <div class="flex justify-center space-x-6">
+                <a href="#" class="hover:text-reropero-soft-green transition-colors">Política de Privacidad</a>
+                <a href="#" class="hover:text-reropero-soft-green transition-colors">Términos de Servicio</a>
+                <a href="#" class="hover:text-reropero-soft-green transition-colors">Contáctanos</a>
+                <!-- NUEVO ENLACE: Sobre Nosotros -->
+                <a href="#" onclick="showSection('sobre-nosotros')" class="hover:text-reropero-soft-green transition-colors font-bold">Sobre Nosotros</a>
+            </div>
+            <!-- Misión y Visión ELIMINADAS directamente del footer -->
+            <p class="mt-6 text-xs">&copy; 2024 Re-Ropero. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+
+    <!-- BLOQUE DE JAVASCRIPT Y FIREBASE PARA FUNCIONALIDAD -->
+    <script type="module">
+        // Importaciones de Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, query, where, updateDoc, increment, getDocs, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Establecer nivel de log para depuración de Firestore
+        setLogLevel('debug');
+
+        // Variables Globales de Firebase y entorno
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let app, db, auth, userId = null;
+        let isAuthReady = false;
+
+        // ------------------------------------
+        // UTILIDADES UI
+        // ------------------------------------
+
+        /**
+         * Muestra un mensaje temporal en la esquina superior derecha.
+         * @param {string} message - El texto del mensaje.
+         * @param {'success'|'error'} type - El tipo de mensaje (para color).
+         */
+        function showMessage(message, type = 'success') {
+            const box = document.getElementById('message-box');
+            const text = document.getElementById('message-text');
+            
+            box.classList.remove('translate-x-0', 'bg-green-500', 'bg-red-500');
+            box.classList.add('translate-x-full');
+
+            if (type === 'success') {
+                box.classList.add('bg-green-500', 'text-white');
+                box.classList.remove('bg-red-500');
+            } else {
+                box.classList.add('bg-red-500', 'text-white');
+                box.classList.remove('bg-green-500');
+            }
+            text.textContent = message;
+            box.classList.remove('translate-x-full');
+            box.classList.add('translate-x-0');
+
+            setTimeout(() => {
+                box.classList.remove('translate-x-0');
+                box.classList.add('translate-x-full');
+            }, 3000);
+        }
+        
+        // Asignar al scope global para que los onclick funcionen
+        window.showMessage = showMessage;
+
+
+        /**
+         * Oculta todas las secciones y muestra la solicitada.
+         * Actualiza el estado de los enlaces de navegación.
+         * @param {string} sectionId - El ID de la sección a mostrar.
+         */
+        function showSection(sectionId) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.page-view').forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            // Mostrar la sección solicitada
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+            } else {
+                console.error(`Section with ID '${sectionId}' not found.`);
+            }
+
+            // Actualizar estado activo en la navegación
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('bg-reropero-soft-green', 'text-gray-900', 'font-bold');
+                link.classList.add('text-reropero-dark-green');
+            });
+
+            const activeLink = document.getElementById(`nav-${sectionId}`);
+            if (activeLink) {
+                activeLink.classList.add('bg-reropero-soft-green', 'text-gray-900', 'font-bold');
+                activeLink.classList.remove('text-reropero-dark-green');
+            }
+        }
+        
+        // Asignar al scope global para que los onclick funcionen
+        window.showSection = showSection;
+
+
+        // ------------------------------------
+        // LÓGICA DE FIREBASE Y AUTH
+        // ------------------------------------
+
+        /**
+         * Inicializa Firebase y realiza la autenticación inicial.
+         */
+        async function initializeFirebaseAndAuth() {
+            try {
+                if (Object.keys(firebaseConfig).length === 0) {
+                    console.error("Firebase config is empty. Cannot initialize.");
+                    return;
+                }
+                
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                // Listener de cambio de estado de autenticación
+                onAuthStateChanged(auth, (user) => {
+                    isAuthReady = true;
+                    const navAuth = document.getElementById('nav-auth');
+                    const navPerfil = document.getElementById('nav-perfil');
+                    const userIdDisplay = document.getElementById('user-id-display');
+
+                    if (user) {
+                        userId = user.uid;
+                        navAuth.textContent = 'Cerrar Sesión';
+                        navAuth.onclick = () => { handleSignOut(); return false; };
+                        navPerfil.classList.remove('hidden');
+                        userIdDisplay.textContent = `UID: ${userId}`;
+                        userIdDisplay.classList.remove('hidden');
+                        
+                        // Una vez autenticado, cargamos los datos (si ya lo hemos hecho antes)
+                        fetchUserData(userId);
+                        fetchImpactData();
+                    } else {
+                        userId = null;
+                        navAuth.textContent = 'Iniciar Sesión';
+                        navAuth.onclick = () => { handleSignIn(); return false; };
+                        navPerfil.classList.add('hidden');
+                        userIdDisplay.classList.add('hidden');
+                        
+                        // Si no hay usuario, mostramos el perfil como "inactivo"
+                        updateProfileUI({ points: 0 });
+                    }
+                    
+                    // Asegurarse de que la sección inicial se muestre
+                    showSection('proposito');
+                });
+
+                // Autenticación inicial con token personalizado o anónima
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+            } catch (error) {
+                console.error("Error during Firebase initialization or sign-in:", error);
+                showMessage("Error al conectar con el servicio de datos.", 'error');
+                isAuthReady = true;
+                showSection('proposito'); // Asegurar que la página carga incluso con error
+            }
+        }
+
+        /** Simula el cierre de sesión */
+        async function handleSignOut() {
+            try {
+                await auth.signOut();
+                showMessage('Sesión cerrada correctamente.', 'success');
+            } catch (error) {
+                console.error("Error al cerrar sesión:", error);
+                showMessage('Error al cerrar sesión.', 'error');
+            }
+        }
+
+        /** Simula la acción de iniciar sesión (o simplemente navegar al perfil) */
+        function handleSignIn() {
+             // Redirigir al perfil si ya estamos listos (ya se maneja con onAuthStateChanged)
+             showSection('perfil'); 
+        }
+
+        // ------------------------------------
+        // LÓGICA DE DATOS (Firestore)
+        // ------------------------------------
+        
+        /**
+         * Obtiene los datos del usuario en tiempo real.
+         * @param {string} currentUserId - El UID del usuario autenticado.
+         */
+        function fetchUserData(currentUserId) {
+            if (!db || !currentUserId) return;
+            
+            const userDocRef = doc(db, "artifacts", appId, "users", currentUserId, "data", "profile");
+
+            onSnapshot(userDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    updateProfileUI(userData);
+                } else {
+                    // Inicializar el perfil si no existe (la primera vez que entra)
+                    initializeUserProfile(currentUserId);
+                }
+            }, (error) => {
+                console.error("Error fetching user data:", error);
+                showMessage("Error al cargar tu perfil.", 'error');
+            });
+        }
+        
+        /**
+         * Inicializa el perfil del usuario con valores por defecto.
+         * @param {string} currentUserId - El UID del usuario autenticado.
+         */
+        async function initializeUserProfile(currentUserId) {
+            if (!db || !currentUserId) return;
+
+            // Usamos "@marti_1566" como nombre de usuario por defecto para cumplir con la solicitud.
+            const defaultUsername = "@marti_1566";
+            
+            // ASIGNAMOS 1500 PUNTOS COMO VALOR INICIAL PARA SIMULAR APORTES DE MARTINA (SOLICITUD DEL USUARIO)
+            const defaultProfile = {
+                username: defaultUsername,
+                points: 1500, // <-- Valor inicial para simular aportes de Martina
+                initial: defaultUsername.charAt(1).toUpperCase() // La primera letra después del @
+            };
+            
+            try {
+                const userDocRef = doc(db, "artifacts", appId, "users", currentUserId, "data", "profile");
+                await setDoc(userDocRef, defaultProfile);
+            } catch (error) {
+                console.error("Error initializing user profile:", error);
+            }
+        }
+
+        /**
+         * Actualiza la UI del perfil con los datos del usuario.
+         * @param {object} data - Los datos del perfil del usuario.
+         */
+        function updateProfileUI(data) {
+            const profileInitial = document.getElementById('profile-initial');
+            const profileUsername = document.getElementById('profile-username');
+            const userPoints = document.getElementById('user-points');
+            const profileStatus = document.getElementById('profile-status');
+            
+            // Nombre de usuario por defecto si no está en la DB
+            const defaultUsername = "@marti_1566";
+
+            if (data && data.points !== undefined) {
+                // Si la data existe, usamos los valores de la DB o el default si faltan.
+                profileInitial.textContent = data.initial || defaultUsername.charAt(1).toUpperCase();
+                profileUsername.textContent = data.username || defaultUsername;
+                userPoints.textContent = data.points.toLocaleString('es-CL');
+                profileStatus.classList.add('hidden');
+                document.getElementById('profile-content').classList.remove('opacity-50');
+            } else {
+                // Estado no autenticado o no cargado: muestra el placeholder de Martina
+                profileInitial.textContent = defaultUsername.charAt(1).toUpperCase();
+                profileUsername.textContent = defaultUsername;
+                userPoints.textContent = '0';
+                profileStatus.classList.remove('hidden');
+                document.getElementById('profile-content').classList.add('opacity-50');
+            }
+        }
+        
+        /**
+         * Obtiene los datos de impacto global en tiempo real.
+         */
+        function fetchImpactData() {
+            if (!db) return;
+
+            // La ruta correcta para un documento público debe ser Colección/Doc/Col/Doc/Col/Doc (6 segmentos).
+            const impactDocRef = doc(db, "artifacts", appId, "public", "data", "global_metrics", "summary");
+            
+            onSnapshot(impactDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const impactData = docSnap.data();
+                    updateImpactUI(impactData);
+                } else {
+                    // Inicializar el impacto global si no existe
+                    initializeGlobalImpact();
+                }
+            }, (error) => {
+                console.error("Error fetching global impact data:", error);
+            });
+        }
+        
+        /** Inicializa el impacto global si no existe */
+        async function initializeGlobalImpact() {
+            if (!db) return;
+
+            const defaultImpact = {
+                textiles_kg: 3500,
+                water_L: 5250,
+                co2_kg: 12600
+            };
+            
+            try {
+                // Usar la ruta de 6 segmentos para el documento.
+                const impactDocRef = doc(db, "artifacts", appId, "public", "data", "global_metrics", "summary");
+                await setDoc(impactDocRef, defaultImpact);
+            } catch (error) {
+                console.error("Error initializing global impact:", error);
+            }
+        }
+
+        /**
+         * Actualiza la UI de impacto global.
+         * @param {object} data - Los datos de impacto global.
+         */
+        function updateImpactUI(data) {
+            if (data) {
+                // El texto 'Textiles Reciclados' ya fue limpiado de emojis.
+                document.getElementById('impact-textiles').textContent = `${(data.textiles_kg / 1000).toFixed(1)} Kg`;
+                
+                // La línea 'Agua Ahorrada' no tiene ningún emoji o rombo.
+                document.getElementById('impact-water').textContent = `${(data.water_L / 1000).toFixed(1)}M L`;
+                
+                document.getElementById('impact-co2').textContent = `${(data.co2_kg / 1000).toFixed(1)} Kg`;
+                document.getElementById('impact-view-title').textContent = "Impacto de la Comunidad Re-Ropero";
+            }
+        }
+        
+        // ------------------------------------
+        // LÓGICA DE DONACIÓN
+        // ------------------------------------
+        
+        /**
+         * Simula una donación al escanear el QR: Incrementa puntos del usuario e impacto global.
+         */
+        async function simulateDonation() {
+            if (!userId || !db) {
+                showMessage('Debes iniciar sesión para registrar tu donación.', 'error');
+                showSection('perfil');
+                return;
+            }
+
+            const pointsToAdd = 500;
+            const impactValues = {
+                textiles: 15, // kg
+                water: 400,  // L
+                co2: 50      // kg
+            };
+
+            try {
+                // 1. Actualizar puntos del usuario
+                const userDocRef = doc(db, "artifacts", appId, "users", userId, "data", "profile");
+                await updateDoc(userDocRef, {
+                    points: increment(pointsToAdd)
+                });
+
+                // 2. Actualizar impacto global (colección pública)
+                const impactDocRef = doc(db, "artifacts", appId, "public", "data", "global_metrics", "summary");
+                await updateDoc(impactDocRef, {
+                    textiles_kg: increment(impactValues.textiles),
+                    water_L: increment(impactValues.water),
+                    co2_kg: increment(impactValues.co2)
+                });
+
+                showMessage(`¡Donación registrada! Ganaste ${pointsToAdd} puntos.`, 'success');
+
+            } catch (error) {
+                console.error("Error al registrar la donación:", error);
+                showMessage("Error al registrar la donación. Intenta de nuevo.", 'error');
+            }
+        }
+        
+        // Asignar al scope global para que los onclick funcionen
+        window.simulateDonation = simulateDonation;
+
+
+        // Inicializar la aplicación al cargar la ventana
+        window.onload = initializeFirebaseAndAuth;
+
+    </script>
+</body>
+</html>
