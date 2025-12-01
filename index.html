@@ -414,13 +414,23 @@
         </div>
     </section>
 
-    <!-- 6. Contenido de SABER MÁS (Noticias e Información - Revertido) --><section id="saber-mas" class="page-view hidden bg-reropero-light-gray">
+    <!-- 6. Contenido de SABER MÁS (LLM Powered) (Fondo Gris Claro) -->
+    <section id="saber-mas" class="page-view hidden bg-reropero-light-gray">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 class="text-4xl sm:text-5xl font-extrabold text-reropero-dark-green text-center mb-12">
-                El camino hacia la moda circular
+                El Camino Hacia la Moda Circular
             </h2>
+
+            <!-- Pestañas de Navegación -->
+            <div class="flex border-b border-gray-300 mb-8">
+                <button id="tab-info" onclick="showTab('info')" class="tab-button active py-2 px-4 text-lg text-gray-600 transition-colors">
+                    Información y Noticias
+                </button>
+            </div>
             
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Contenido 1: Información y Noticias (Estático) -->
+            <div id="content-info" class="tab-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 
                 <!-- Artículo 1: Fast Fashion -->
                 <div class="lg:col-span-1 bg-white p-8 rounded-xl shadow-2xl border-l-4 border-reropero-dark-green">
@@ -464,45 +474,14 @@
                              onerror="this.onerror=null; this.src='https://placehold.co/600x400/cccccc/000000?text=Error+al+cargar+imagen+Fast+Fashion'">
                     </div>
                     <!-- FIN IMAGEN -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Contenido 2: Re-Asesor Textil (LLM Powered) -->
-            <div id="content-asesor" class="tab-content hidden">
-                <div class="bg-white p-6 rounded-xl shadow-2xl border-2 border-reropero-dark-green/30 max-w-2xl mx-auto">
-                    <h3 class="text-2xl font-bold text-reropero-dark-green mb-4 text-center">
-                        Re-Asesor Textil impulsado por Gemini ✨
-                    </h3>
-                    <p class="mb-6 text-center text-lg">
-                        Cuéntanos sobre tu prenda y su estado, y nuestro asistente te dará ideas para repararla o reutilizarla, así le das más vida antes de donar o reciclar.
-                    </p>
-
-                    <div class="space-y-4">
-                        <label for="clothing-item" class="block font-semibold">Describe tu prenda</label>
-                        <input type="text" id="clothing-item" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-reropero-dark-green focus:border-reropero-dark-green" placeholder="Ej: Pantalón de mezclilla o Suéter de algodón">
-                        
-                        <label for="clothing-condition" class="block font-semibold">Indica su condición </label>
-                        <textarea id="clothing-condition" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-reropero-dark-green focus:border-reropero-dark-green" placeholder="Ej: Agujero pequeño en el codo, o ya no me gusta el color."></textarea>
-                    </div>
-
-                    <button id="generate-recommendation-btn" class="w-full mt-6 p-3 text-white bg-reropero-dark-green font-bold rounded-lg hover:bg-green-800 transition-colors flex items-center justify-center" onclick="handleRecommendationClick()">
-                        <svg id="llm-icon" xmlns="http://www.w3.org/2000/svg" class="svg-icon h-5 w-5 mr-2 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"/><path d="M9 12h.01M15 12h.01M12 9v.01M12 15v.01"/></svg>
-                        Generar Recomendación
-                    </button>
-
-                    <!-- Área de resultados -->
-                    <div id="recommendation-results" class="mt-8 p-4 bg-reropero-light-gray rounded-lg border border-reropero-soft-green hidden">
-                        <h4 class="text-xl font-bold text-reropero-dark-green mb-3">Resultado del Asesor:</h4>
-                        <div id="recommendation-output" class="text-gray-700 whitespace-pre-wrap">
-                            <!-- Contenido generado aquí -->
-                        </div>
+              
                     </div>
 
                 </div>
             </div>
         </div>
     </section>
+
     
        <!-- 7. Contenido de Ayuda (Preguntas Frecuentes) (Fondo Gris Claro) -->
     <section id="ayuda" class="page-view hidden bg-reropero-light-gray">
@@ -595,7 +574,7 @@
                 <a href="#" onclick="showSection('sobre-nosotros')" class="hover:text-reropero-soft-green transition-colors font-bold">Sobre Nosotros</a>
             </div>
             <!-- Misión y Visión ELIMINADAS directamente del footer -->
-            <p class="mt-6 text-xs">&copy; 2024 Re-Ropero. Todos los derechos reservados.</p>
+            <p class="mt-6 text-xs">&copy; 2025 Re-Ropero. Todos los derechos reservados.</p>
         </div>
     </footer>
 
@@ -964,6 +943,47 @@
 
         // Inicializar la aplicación al cargar la ventana
         window.onload = initializeFirebaseAndAuth;
+
+
+ // Función para cambiar las pestañas dentro de "Saber Más"
+        function showTab(tabId) {
+            // Ocultar todos los contenidos
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            // Remover 'active' de todos los botones
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Mostrar el contenido y activar el botón
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        }
+
+        // Función de utilidad para caja de mensajes personalizada
+        function showMessageBox(message, type) {
+            const msgBox = document.getElementById('message-box');
+            const msgText = document.getElementById('message-text');
+            
+            if (msgBox && msgText) {
+                msgText.textContent = message;
+                msgBox.className = 'fixed top-20 right-4 p-4 rounded-lg shadow-xl z-50 transition-transform transform';
+                
+                if (type === 'error') {
+                    msgBox.classList.add('bg-red-500', 'text-white');
+                } else if (type === 'info') {
+                    msgBox.classList.add('bg-blue-500', 'text-white');
+                } else if (type === 'success') {
+                    msgBox.classList.add('bg-green-500', 'text-white');
+                }
+                
+                msgBox.classList.remove('translate-x-full'); // Desliza hacia adentro
+                setTimeout(() => {
+                    msgBox.classList.add('translate-x-full'); // Desliza hacia afuera después de 4 segundos
+                }, 4000);
+            }
+        }
 
     </script>
 </body>
